@@ -53,6 +53,33 @@ class App extends Component {
       .then((response) => {
         console.log(response);
 
+    //    const x = response.items;
+
+/*        const albumNames = x.map(item => {
+                        Object.keys(item).map(item2 => {
+                          //console.log('item2 ' + item2.release_date);
+                          Object.keys(item2).map(item3 => {
+                            //console.log('item3 ' + item3);
+                          })
+                        })
+                        return item.name
+        });
+
+        const releaseDates = x.map(item => {
+                          return item.release_date;
+        })
+
+        console.log('release dates: ' + releaseDates);
+
+        const before = albumNames;
+        console.log('before ' + before);
+        const {items, name} = before;
+
+        const {images} = response.items.images;
+        //console.log('images : ' + images);
+
+        console.log('Destructured : name ' + {name});
+*/
         this.setState({
           //albums: response.items[0].name
           albums: response.items
@@ -61,6 +88,9 @@ class App extends Component {
       .catch((err) => {
         console.log(err);
       });
+
+
+
   }
 
 
@@ -87,9 +117,39 @@ class App extends Component {
   render() {
 
     const items = this.state.albums;
-    const albumNames = items.map(item => {
+/*    const albumNames = items.map(item => {
                     return <div>{item.name}</div>
     });
+
+    const image = items.map(item => {
+                    item.images.map(item2 => {
+                      //console.log('item ' + item2)
+                        //console.log(Object.keys(item2));
+                      Object.keys(item).map((item3, key) => {
+                        //console.log(item3.image)
+                      })
+                    })
+                  })
+
+
+  //  console.log('images ' + image);
+  */
+
+
+  const info = items.map(item => {
+              const names = item.name;
+              const dates = item.release_date;
+              const images = item.images[1].url;
+
+              return (
+                <div>
+                  {names} <br/>
+                  {dates} <br/>
+                <img src ={images} />
+                </div>
+              );
+  })
+
 
     return (
       <div className="App">
@@ -107,8 +167,7 @@ class App extends Component {
 
         <div className="albums">
           <h2>Other Albums by {this.state.nowPlaying.artist }</h2>
-          {albumNames}
-
+          {info}
         </div>
 
       </div>
