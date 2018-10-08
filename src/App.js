@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import './App.scss';
+import { connect } from 'react-redux';
+import { fetchAlbums } from './actions/FetchAlbums-action';
+import {bindActionCreators, compose, applyMiddleware, createStore} from 'redux';
+import thunk from 'redux-thunk';
+
 
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
-  constructor(props) {
+/*  constructor(props) {
     super(props);
 
     const params = this.getHashParams();
@@ -33,7 +38,7 @@ class App extends Component {
     return hashParams;
   }
 
-  componentDidMount = () => {
+/*  componentDidMount = () => {
     spotifyApi.getMyCurrentPlaybackState()
       .then((response) => {
         this.setState({
@@ -59,6 +64,7 @@ class App extends Component {
 
   }
 
+
   getAlbums = () => {
     spotifyApi.getArtistAlbums(this.state.nowPlaying.ID)
       .then((response) => {
@@ -81,7 +87,7 @@ class App extends Component {
         console.log('top artists : ' + err);
       })
   }
-*/
+
 
     searchSongs = () => {
   // search tracks whose name, album or artist contains 'Love'
@@ -121,9 +127,14 @@ class App extends Component {
 */
 
 
-  render() {
+  componentDidMount = () => {
+    this.props.fetchAlbums();
+  }
 
-    const items = this.state.albums;
+  render() {
+    console.log(this.props);
+
+  {/*  const items = this.state.albums;
 
     const info = items.map((item, key) => {
               const names = item.name;
@@ -138,7 +149,7 @@ class App extends Component {
                 </div>
               );
     })
-
+  */}
 
     return (
       <div className="App">
@@ -171,4 +182,12 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  fetchAlbums: () => dispatch(fetchAlbums())
+})
+
+const mapStateToProps = state => ({
+  data: state.FetchAlbumsReducer
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
