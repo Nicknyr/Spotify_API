@@ -45,41 +45,23 @@ class App extends Component {
             }
         });
         this.getAlbums();
+        //this.getTopArtists();
+        this.searchSongs();
       })
+
+      spotifyApi.getMyTopArtists()
+        .then((response) => {
+          console.log('Top artists : ' + response);
+        })
+        .catch((err) => {
+          console.log('top artists : ' + err);
+        })
+
   }
 
   getAlbums = () => {
     spotifyApi.getArtistAlbums(this.state.nowPlaying.ID)
       .then((response) => {
-        console.log(response);
-
-    //    const x = response.items;
-
-/*        const albumNames = x.map(item => {
-                        Object.keys(item).map(item2 => {
-                          //console.log('item2 ' + item2.release_date);
-                          Object.keys(item2).map(item3 => {
-                            //console.log('item3 ' + item3);
-                          })
-                        })
-                        return item.name
-        });
-
-        const releaseDates = x.map(item => {
-                          return item.release_date;
-        })
-
-        console.log('release dates: ' + releaseDates);
-
-        const before = albumNames;
-        console.log('before ' + before);
-        const {items, name} = before;
-
-        const {images} = response.items.images;
-        //console.log('images : ' + images);
-
-        console.log('Destructured : name ' + {name});
-*/
         this.setState({
           //albums: response.items[0].name
           albums: response.items
@@ -88,17 +70,39 @@ class App extends Component {
       .catch((err) => {
         console.log(err);
       });
-
-
-
   }
+
+/*  getTopArtists = () => {
+    spotifyApi.getMyTopArtists()
+      .then((response) => {
+        console.log('Top artists : ' + response);
+      })
+      .catch((err) => {
+        console.log('top artists : ' + err);
+      })
+  }
+*/
+
+    searchSongs = () => {
+  // search tracks whose name, album or artist contains 'Love'
+    spotifyApi.searchTracks('Love')
+      .then((response) => {
+        console.log('Search by "Love"', response);
+      })
+      .catch((err) => {
+        console.error('search error : ' + err);
+      });
+    }
+
 
 
 /*  componentDidUpdate = (prevProps, prevState) => {
-    console.log('prevProps and prevState ' + prevProps, prevState);
-    console.log(prevState.nowPlaying.name);
+    //console.log('prevProps and prevState ' + prevProps, prevState);
+    //console.log(prevState.nowPlaying.name);
+    //console.log('prevProps ' + prevProps);
+    //console.log('prevstate ' + prevState);
 
-    if(prevState.nowPlaying.name !== this.state.nowPlaying.name) {
+    if(prevState.nowPlaying !== this.state.nowPlaying) {
       spotifyApi.getMyCurrentPlaybackState()
         .then((response) => {
           this.setState({
@@ -109,6 +113,9 @@ class App extends Component {
             }
           });
         })
+        .catch((err) => {
+          console.log(err);
+        })
     }
   }
 */
@@ -117,50 +124,39 @@ class App extends Component {
   render() {
 
     const items = this.state.albums;
-/*    const albumNames = items.map(item => {
-                    return <div>{item.name}</div>
-    });
 
-    const image = items.map(item => {
-                    item.images.map(item2 => {
-                      //console.log('item ' + item2)
-                        //console.log(Object.keys(item2));
-                      Object.keys(item).map((item3, key) => {
-                        //console.log(item3.image)
-                      })
-                    })
-                  })
-
-
-  //  console.log('images ' + image);
-  */
-
-
-  const info = items.map(item => {
+    const info = items.map((item, key) => {
               const names = item.name;
               const dates = item.release_date;
               const images = item.images[1].url;
 
               return (
-                <div>
+                <div key={key}>
                   {names} <br/>
                   {dates} <br/>
-                <img src ={images} />
+                  <img src ={images} alt="Album cover"/>
                 </div>
               );
-  })
+    })
 
 
     return (
       <div className="App">
 
-        <a href="http://localhost:8888">
-          <button>Login with Spotify</button>
-        </a>
+        {this.state.loggedIn == false ?
+          <a href="http://localhost:8888">
+            <button>Login with Spotify</button>
+          </a>
+        :null}
 
         <div>
           Now Playing: { this.state.nowPlaying.name } by {this.state.nowPlaying.artist}
         </div>
+
+        { this.state.nowPlaying.name == null ?
+          <h1>Commercial</h1>
+        : null}
+
         <div>
           <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
         </div>
