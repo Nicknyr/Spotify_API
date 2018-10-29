@@ -1,29 +1,26 @@
 
 export default function reducer (state = {
-  albums: [],
+  song: '',
   fetching: false,
   fetched: false,
   error: null
 }, action) {
 
   switch(action.type) {
-    case "FETCH_ALBUMS_BY_ARTIST": {
+    case "FETCH_CURRENT_PLAYING_SONG": {
       return {...state, fetching: true}
     }
-    case "FETCH_ALBUMS_BY_ARTIST_REJECTED": {
+    case "FETCH_CURRENT_PLAYING_SONG_REJECTED": {
       return {...state, fetching: false, error: action.payload}
     }
-    case "FETCH_ALBUMS_BY_ARTIST_FULFILLED": {
-      //console.log('action.payload in reducer ' + action.payload.items);
+    case "FETCH_CURRENT_PLAYING_SONG_FULFILLED": {
       return {
         ...state,
         fetching: false,
         fetched: true,
-        //albums: action.payload.items[0].name
-        albums: action.payload.items
+        song: action.payload
       }
     }
     default: return state;
   }
-  //return state;
 }

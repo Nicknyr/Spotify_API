@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import './App.scss';
 import { connect } from 'react-redux';
-import { fetchAlbums } from './actions/FetchAlbums-action';
-import {bindActionCreators, compose, applyMiddleware, createStore} from 'redux';
-import thunk from 'redux-thunk';
+import { fetchAlbumsByArtist } from './actions/FetchCurrentPlaying-action';
+import { fetchCurrentPlaying } from './actions/FetchCurrentPlaying-action';
+import { fetchCurrentPlayingSong } from './actions/FetchCurrentPlayingSong-action';
+import { fetchTopArtists } from './actions/FetchTopArtists-action';
+import jsonQuery from 'json-query';
+//import {bindActionCreators, compose, applyMiddleware, createStore} from 'redux';
+//import thunk from 'redux-thunk';
 
 
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
-/*  constructor(props) {
+  constructor(props) {
     super(props);
 
     const params = this.getHashParams();
@@ -28,6 +32,7 @@ class App extends Component {
 
   }
 
+
   getHashParams = () => {
     var hashParams = {};
     var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -38,45 +43,7 @@ class App extends Component {
     return hashParams;
   }
 
-/*  componentDidMount = () => {
-    spotifyApi.getMyCurrentPlaybackState()
-      .then((response) => {
-        this.setState({
-          nowPlaying: {
-              name: response.item.name,
-              albumArt: response.item.album.images[0].url,
-              artist: response.item.artists[0].name,
-              ID: response.item.artists[0].id
-            }
-        });
-        this.getAlbums();
-        //this.getTopArtists();
-        this.searchSongs();
-      })
 
-      spotifyApi.getMyTopArtists()
-        .then((response) => {
-          console.log('Top artists : ' + response);
-        })
-        .catch((err) => {
-          console.log('top artists : ' + err);
-        })
-
-  }
-
-
-  getAlbums = () => {
-    spotifyApi.getArtistAlbums(this.state.nowPlaying.ID)
-      .then((response) => {
-        this.setState({
-          //albums: response.items[0].name
-          albums: response.items
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
 
 /*  getTopArtists = () => {
     spotifyApi.getMyTopArtists()
@@ -128,40 +95,39 @@ class App extends Component {
 
 
   componentDidMount = () => {
-    this.props.fetchAlbums();
+    this.props.fetchCurrentPlaying();
+    this.props.fetchCurrentPlayingSong();
+    this.props.fetchTopArtists();
   }
 
+
   render() {
-    console.log(this.props);
+    const album = this.props.currentlyPlaying.album;
+    const cover = this.props.currentlyPlaying.cover;
+    const artist = this.props.currentlyPlaying.artist;
+    const song = this.props.currentSong.song;
 
-  {/*  const items = this.state.albums;
-
-    const info = items.map((item, key) => {
-              const names = item.name;
-              const dates = item.release_date;
-              const images = item.images[1].url;
-
-              return (
-                <div key={key}>
-                  {names} <br/>
-                  {dates} <br/>
-                  <img src ={images} alt="Album cover"/>
-                </div>
-              );
+    const otherAlbumCovers = Object.entries(this.props.otherAlbums.albums).map(item => {
+      return (
+        <div>
+          <div>{item[1].name}</div>
+          <div><img src={item[1].images[1].url} alt="album cover" style={{ height: 150 }}/></div>
+        </div>
+      );
     })
-  */}
+
+    console.log(otherAlbumCovers);
 
     return (
       <div className="App">
-
-        {this.state.loggedIn == false ?
+        {this.state.loggedIn === false ?
           <a href="http://localhost:8888">
             <button>Login with Spotify</button>
           </a>
         :null}
 
         <div>
-          Now Playing: { this.state.nowPlaying.name } by {this.state.nowPlaying.artist}
+         Now Playing: {song} by {artist}
         </div>
 
         { this.state.nowPlaying.name == null ?
@@ -169,12 +135,12 @@ class App extends Component {
         : null}
 
         <div>
-          <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
+          <img src={cover} style={{ height: 150 }} alt="Album cover"/>
         </div>
 
         <div className="albums">
-          <h2>Other Albums by {this.state.nowPlaying.artist }</h2>
-          {info}
+          <h2>Other Albums by {artist}</h2>
+          {otherAlbumCovers}
         </div>
 
       </div>
@@ -183,11 +149,16 @@ class App extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchAlbums: () => dispatch(fetchAlbums())
+  fetchCurrentPlaying: () => dispatch(fetchCurrentPlaying()),
+  fetchCurrentPlayingSong: () => dispatch(fetchCurrentPlayingSong()),
+  fetchTopArtists: (token) => dispatch(fetchTopArtists(token))
 })
 
 const mapStateToProps = state => ({
-  data: state.FetchAlbumsReducer
+  otherAlbums: state.FetchAlbumsReducer,
+  currentlyPlaying: state.FetchCurrentPlayingReducer,
+  currentSong: state.FetchCurrentPlayingSongReducer,
+  topArtists: state.FetchTopArtists
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
