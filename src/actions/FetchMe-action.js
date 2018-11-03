@@ -1,22 +1,20 @@
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
-
-export function fetchTopArtists () {
+export function fetchMe() {
   return function(dispatch) {
-    dispatch({ type: "FETCH_TOP_ARTISTS"})
+    dispatch({ type: "FETCH_ME"})
 
-    spotifyApi.getMyTopArtists('https://api.spotify.com/v1/me/top/artists')
+    spotifyApi.getMe()
       .then((response) => {
-        console.log('Top Artists response ' + response);
         dispatch({
-          type: "FETCH_TOP_ARTISTS_FULFILLED",
+          type: "FETCH_ME_FULFILLED",
           payload: response
         })
       })
       .catch((err) => {
         dispatch({
-          type: "FETCH_TOP_ARTISTS_REJECTED",
+          type: "FETCH_ME_REJECTED",
           payload: err
         })
       })
