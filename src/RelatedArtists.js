@@ -9,17 +9,7 @@ class RelatedArtists extends Component {
   }
 
   render(){
-    /*const otherAlbumCovers = Object.entries(this.props.otherAlbums.albums).map((item, key) => {
-      //console.log('item in otherAlbumCovers : ' + item[1].name);
-      return (
-        <div key={key}>
-          <div>{item[1].name}</div>
-          <div><img src={item[1].images[1].url} alt="album cover" style={{ height: 150 }}/></div>
-        </div>
-      );
-    })
-    */
-
+  
     const relatedArtists = Object.entries(this.props.relatedArtists.relatedArtists).map((item, key) => {
       console.log(item[1].images[0].url);
       return (
